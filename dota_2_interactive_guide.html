@@ -1,0 +1,1393 @@
+<!DOCTYPE html>
+<html lang="id" class="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dota 2 Interactive Guide — General, Mechanics, Mikro & Makro</title>
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Google Fonts: Inter & Cinzel for Dota aesthetic accents -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;800&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', 'sans-serif'],
+            display: ['Cinzel', 'serif'],
+          },
+          colors: {
+            dota: {
+              bg: '#0b0e14',
+              card: '#131822',
+              cardHover: '#19202d',
+              border: '#242d3d',
+              radiant: '#22c55e',
+              radiantDark: '#14532d',
+              dire: '#ef4444',
+              direDark: '#7f1d1d',
+              gold: '#eab308',
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    body {
+      background-color: #0b0e14;
+      color: #e2e8f0;
+      overflow-x: hidden;
+    }
+    /* Custom scrollbar */
+    ::-webkit-scrollbar {
+      width: 8px;
+      height: 8px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #0b0e14;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #242d3d;
+      border-radius: 9999px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #374357;
+    }
+    /* Map pulse animation */
+    @keyframes pulseGlow {
+      0%, 100% { opacity: 0.85; filter: drop-shadow(0 0 6px currentColor); }
+      50% { opacity: 1; filter: drop-shadow(0 0 14px currentColor); }
+    }
+    .lane-active {
+      animation: pulseGlow 2.5s infinite ease-in-out;
+    }
+    /* Custom range slider */
+    input[type=range] {
+      -webkit-appearance: none;
+      background: transparent;
+    }
+    input[type=range]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      height: 20px;
+      width: 20px;
+      border-radius: 50%;
+      background: #eab308;
+      cursor: pointer;
+      margin-top: -6px;
+      box-shadow: 0 0 10px rgba(234, 179, 8, 0.6);
+    }
+    input[type=range]::-webkit-slider-runnable-track {
+      width: 100%;
+      height: 8px;
+      cursor: pointer;
+      background: #242d3d;
+      border-radius: 999px;
+    }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col antialiased selection:bg-amber-500/30 selection:text-amber-200">
+
+  <!-- Top Header -->
+  <header class="sticky top-0 z-40 bg-[#0b0e14]/90 backdrop-blur-md border-b border-[#242d3d]">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex flex-col sm:flex-row items-center justify-between gap-4">
+      <div class="flex items-center gap-3">
+        <!-- Dota 2 Styled SVG Emblem -->
+        <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-red-600 via-red-800 to-slate-900 p-2 flex items-center justify-center border border-red-500/40 shadow-lg shadow-red-950/50">
+          <svg viewBox="0 0 24 24" class="w-6 h-6 fill-white" xmlns="http://www.w3.org/2000/svg">
+            <path d="M3 3h18v18H3V3zm3 3v3.5l8.5 8.5H18v-3.5L9.5 6H6zm12 0h-3l3 3V6zM6 15v3h3l-3-3z"/>
+          </svg>
+        </div>
+        <div>
+          <h1 class="font-display text-lg sm:text-xl font-bold tracking-wider text-white flex items-center gap-2">
+            DOTA 2 <span class="text-amber-400">INTERACTIVE GUIDE</span>
+          </h1>
+          <p class="text-xs text-slate-400">Panduan Dasar, Peta, Timer Objektif, serta Mekanik Mikro & Makro</p>
+        </div>
+      </div>
+
+      <!-- Navigation Tabs -->
+      <nav class="flex flex-wrap items-center gap-1.5 bg-[#131822] p-1.5 rounded-2xl border border-[#242d3d] w-full sm:w-auto justify-center" role="tablist">
+        <button onclick="switchTab('general')" id="tab-general" class="tab-btn flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs sm:text-sm font-semibold transition-all duration-200 bg-amber-500/20 text-amber-300 border border-amber-500/40 shadow-sm">
+          <i data-lucide="map" class="w-4 h-4"></i>
+          <span>Game General</span>
+        </button>
+        <button onclick="switchTab('mechanics')" id="tab-mechanics" class="tab-btn flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs sm:text-sm font-semibold transition-all duration-200 text-slate-400 hover:text-white hover:bg-[#19202d]">
+          <i data-lucide="clock" class="w-4 h-4"></i>
+          <span>Game Mechanics</span>
+        </button>
+        <button onclick="switchTab('micromacro')" id="tab-micromacro" class="tab-btn flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs sm:text-sm font-semibold transition-all duration-200 text-slate-400 hover:text-white hover:bg-[#19202d]">
+          <i data-lucide="cpu" class="w-4 h-4"></i>
+          <span>Mikro & Makro</span>
+        </button>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Main Content Container -->
+  <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
+
+    <!-- ========================================================= -->
+    <!-- TAB 1: GAME GENERAL                                       -->
+    <!-- ========================================================= -->
+    <section id="section-general" class="space-y-8 animate-fadeIn">
+
+      <!-- Section 1: Game General & Team -->
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+        <!-- Left Column: Original Text Content -->
+        <div class="lg:col-span-6 space-y-6">
+          <!-- Card: Game General -->
+          <div class="bg-[#131822] border border-[#242d3d] rounded-2xl p-6 shadow-xl">
+            <div class="flex items-center gap-2.5 mb-4">
+              <div class="p-2 rounded-xl bg-amber-500/10 text-amber-400 border border-amber-500/20">
+                <i data-lucide="globe" class="w-5 h-5"></i>
+              </div>
+              <h2 class="font-display text-xl font-bold text-white">Game General</h2>
+            </div>
+            <div class="space-y-3 text-slate-300 text-sm sm:text-base leading-relaxed">
+              <p>Dota 2 game moba yang memiliki 3 lane tanpa sistem mirror pada tiap tim nya, jadi tidak seperti moba lain yang kamu selalu spawn di pojok kiri bawah dan musuh kamu selalu spawn di pojok kanan atas. Perspektif Dota akan tetap sama dari tim manapun kamu berada.</p>
+            </div>
+            <!-- Callout: Catatan Tambahan -->
+            <div class="mt-4 p-4 rounded-xl bg-amber-950/20 border-l-4 border-amber-500 text-xs sm:text-sm text-amber-100/90 leading-relaxed">
+              <div class="flex items-center gap-1.5 font-semibold text-amber-400 mb-1">
+                <i data-lucide="info" class="w-4 h-4"></i>
+                <span>Catatan Tambahan:</span>
+              </div>
+              Karena perspektif kamera tidak dibalik (non-mirror), sudut pandang (<em>camera angle</em>) saat bermain di tim atas (Dire) akan terasa sedikit berbeda dibandingkan tim bawah (Radiant)—misalnya melihat ke arah bawah layar terasa lebih sempit karena posisi HUD di bagian bawah.
+            </div>
+          </div>
+
+          <!-- Card: Team -->
+          <div class="bg-[#131822] border border-[#242d3d] rounded-2xl p-6 shadow-xl">
+            <div class="flex items-center gap-2.5 mb-4">
+              <div class="p-2 rounded-xl bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+                <i data-lucide="shield" class="w-5 h-5"></i>
+              </div>
+              <h2 class="font-display text-xl font-bold text-white">Team</h2>
+            </div>
+            <div class="space-y-3 text-slate-300 text-sm sm:text-base leading-relaxed">
+              <p>Pembagian tim dota yaitu berupa:</p>
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 my-2">
+                <div class="p-3 rounded-xl bg-emerald-950/30 border border-emerald-500/30 flex items-center gap-3">
+                  <span class="w-3.5 h-3.5 rounded-full bg-emerald-500 shadow-lg shadow-emerald-500/50"></span>
+                  <span class="font-semibold text-emerald-300">"Radiant" yang berada di kiri bawah (hijau)</span>
+                </div>
+                <div class="p-3 rounded-xl bg-red-950/30 border border-red-500/30 flex items-center gap-3">
+                  <span class="w-3.5 h-3.5 rounded-full bg-red-500 shadow-lg shadow-red-500/50"></span>
+                  <span class="font-semibold text-red-300">"Dire" yang berada di kanan atas (merah)</span>
+                </div>
+              </div>
+              <p>cara untuk mengetahui bagaimana mengetahui kamu ada tim yang mana adalah dengan melihat bagian atas ketika drafting (setelah accept dan join game) jika ada di sebelah kiri maka "Radiant" dan jika di sebelah kanan maka "Dire"</p>
+            </div>
+          </div>
+
+          <!-- Card: Lane -->
+          <div class="bg-[#131822] border border-[#242d3d] rounded-2xl p-6 shadow-xl">
+            <div class="flex items-center gap-2.5 mb-4">
+              <div class="p-2 rounded-xl bg-sky-500/10 text-sky-400 border border-sky-500/20">
+                <i data-lucide="git-branch" class="w-5 h-5"></i>
+              </div>
+              <h2 class="font-display text-xl font-bold text-white">Lane</h2>
+            </div>
+            <div class="space-y-3 text-slate-300 text-sm sm:text-base leading-relaxed">
+              <p>Seperti yang tadi sempat saya singgung, Dota memiliki 3 lane yaitu Safe lane, Mid lane, dan Offlane peletakan lane nya berbeda tiap tim,</p>
+              <ul class="space-y-2 pl-4 border-l-2 border-slate-700">
+                <li><span class="text-emerald-400 font-semibold">jika Radiant maka:</span> Safe lane di bawah, Mid di tengah, dan Offlane di atas</li>
+                <li><span class="text-red-400 font-semibold">Sebaliknya, pada Dire:</span> Safe lane di atas, Mid di tengah, dan Offlane di bawah</li>
+              </ul>
+              <p>Sehingga tidak seperti moba lainnya, pada Dota musuh di Side lane (Safe lane/Offlane) kamu bukanlah musuh dengan role yang sama, Lane yang memiliki musuh dengan role yang sama hanyalah Mid lane</p>
+              <p class="p-3 rounded-xl bg-[#19202d] border border-[#242d3d] text-slate-200">Misal, jika kamu bermain Safe lane di Radiant maka musuh kamu adalah Offlane dari tim Dire, bukan sesama safelane.</p>
+            </div>
+            <!-- Callout: Catatan Tambahan -->
+            <div class="mt-4 p-4 rounded-xl bg-sky-950/20 border-l-4 border-sky-500 text-xs sm:text-sm text-sky-100/90 leading-relaxed">
+              <div class="flex items-center gap-1.5 font-semibold text-sky-400 mb-1">
+                <i data-lucide="info" class="w-4 h-4"></i>
+                <span>Catatan Tambahan:</span>
+              </div>
+              Dinamakan <em>Safe lane</em> karena jarak dari <em>Tier 1 Tower</em> ke titik pertemuan <em>creep</em> (equilibrium) lebih dekat dan area hutannya (jungle) lebih mudah dijaga/diakses oleh tim sendiri, sehingga relatif lebih aman untuk melakukan <em>farming</em>. Sebaliknya, <em>Offlane</em> disebut juga <em>Hard lane</em> karena jarak ke tower sendiri jauh lebih panjang dan rawan terkena <em>gank</em>.
+            </div>
+          </div>
+        </div>
+
+        <!-- Right Column: Interactive SVG Map Visualizer -->
+        <div class="lg:col-span-6">
+          <div class="sticky top-24 bg-[#131822] border border-[#242d3d] rounded-2xl p-5 sm:p-6 shadow-2xl">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4">
+              <div>
+                <span class="text-xs font-semibold uppercase tracking-wider text-amber-400">Visualisasi Peta Interaktif</span>
+                <h3 class="text-lg font-bold text-white">Posisi Tim, Lane & Matchup Role</h3>
+              </div>
+              <!-- Team Switcher Buttons -->
+              <div class="flex items-center gap-2 bg-[#0b0e14] p-1.5 rounded-xl border border-[#242d3d]">
+                <button onclick="setMapTeam('radiant')" id="btn-map-radiant" class="px-3.5 py-2 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5 bg-emerald-600 text-white shadow-lg shadow-emerald-900/50">
+                  <span class="w-2.5 h-2.5 rounded-full bg-white"></span>
+                  Radiant (Kiri Bawah)
+                </button>
+                <button onclick="setMapTeam('dire')" id="btn-map-dire" class="px-3.5 py-2 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5 text-slate-400 hover:text-white">
+                  <span class="w-2.5 h-2.5 rounded-full bg-red-500"></span>
+                  Dire (Kanan Atas)
+                </button>
+              </div>
+            </div>
+
+            <!-- Lane Focus Filter -->
+            <div class="flex flex-wrap gap-2 mb-4">
+              <button onclick="setMapLaneFilter('all')" id="lane-filter-all" class="px-3 py-1.5 rounded-lg text-xs font-medium bg-slate-700 text-white border border-slate-500 transition">Semua Lane</button>
+              <button onclick="setMapLaneFilter('safelane')" id="lane-filter-safelane" class="px-3 py-1.5 rounded-lg text-xs font-medium bg-[#19202d] text-slate-300 border border-[#242d3d] hover:border-amber-500/50 transition">Safe Lane (Pos 1 & 5)</button>
+              <button onclick="setMapLaneFilter('midlane')" id="lane-filter-midlane" class="px-3 py-1.5 rounded-lg text-xs font-medium bg-[#19202d] text-slate-300 border border-[#242d3d] hover:border-amber-500/50 transition">Mid Lane (Pos 2)</button>
+              <button onclick="setMapLaneFilter('offlane')" id="lane-filter-offlane" class="px-3 py-1.5 rounded-lg text-xs font-medium bg-[#19202d] text-slate-300 border border-[#242d3d] hover:border-amber-500/50 transition">Offlane (Pos 3 & 4)</button>
+            </div>
+
+            <!-- Interactive SVG Dota 2 Map -->
+            <div class="relative w-full aspect-square max-w-[500px] mx-auto rounded-2xl overflow-hidden border-2 border-[#242d3d] bg-[#0e141b] shadow-inner">
+              <svg id="dota-map-svg" viewBox="0 0 400 400" class="w-full h-full select-none">
+                <defs>
+                  <radialGradient id="radiantGlow" cx="15%" cy="85%" r="55%">
+                    <stop offset="0%" stop-color="#22c55e" stop-opacity="0.35"/>
+                    <stop offset="100%" stop-color="#0e141b" stop-opacity="0"/>
+                  </radialGradient>
+                  <radialGradient id="direGlow" cx="85%" cy="15%" r="55%">
+                    <stop offset="0%" stop-color="#ef4444" stop-opacity="0.35"/>
+                    <stop offset="100%" stop-color="#0e141b" stop-opacity="0"/>
+                  </radialGradient>
+                  <pattern id="gridPattern" width="20" height="20" patternUnits="userSpaceOnUse">
+                    <path d="M 20 0 L 0 0 0 20" fill="none" stroke="#1e293b" stroke-width="0.5"/>
+                  </pattern>
+                </defs>
+
+                <!-- Background & Grid -->
+                <rect width="400" height="400" fill="#0e141b"/>
+                <rect width="400" height="400" fill="url(#gridPattern)"/>
+                <rect id="glow-radiant" width="400" height="400" fill="url(#radiantGlow)"/>
+                <rect id="glow-dire" width="400" height="400" fill="url(#direGlow)" opacity="0.35"/>
+
+                <!-- River Diagonal (Top-Left to Bottom-Right) -->
+                <path d="M 35 35 Q 140 160, 200 200 T 365 365" fill="none" stroke="#0ea5e9" stroke-width="18" stroke-opacity="0.22" stroke-linecap="round"/>
+                <path d="M 35 35 Q 140 160, 200 200 T 365 365" fill="none" stroke="#38bdf8" stroke-width="3" stroke-dasharray="6,6" stroke-opacity="0.45"/>
+
+                <!-- Jungle Areas Decorative Patches -->
+                <circle cx="150" cy="280" r="35" fill="#14532d" fill-opacity="0.25" stroke="#22c55e" stroke-opacity="0.2" stroke-dasharray="3,3"/>
+                <circle cx="250" cy="120" r="35" fill="#7f1d1d" fill-opacity="0.25" stroke="#ef4444" stroke-opacity="0.2" stroke-dasharray="3,3"/>
+
+                <!-- TOP LANE PATH -->
+                <g id="svg-lane-top" class="transition-opacity duration-300 cursor-pointer" onclick="setMapLaneFilter(currentTeam === 'radiant' ? 'offlane' : 'safelane')">
+                  <path d="M 48 310 L 48 52 L 310 52" fill="none" stroke="#334155" stroke-width="16" stroke-linecap="round" stroke-linejoin="round"/>
+                  <path id="path-top-highlight" d="M 48 310 L 48 52 L 310 52" fill="none" stroke="#eab308" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" class="lane-active"/>
+                  <!-- Equilibrium Clash Point Top -->
+                  <circle cx="105" cy="52" r="9" fill="#0f172a" stroke="#f59e0b" stroke-width="2.5"/>
+                  <text x="105" y="55" text-anchor="middle" fill="#fbbf24" font-size="8" font-weight="bold">VS</text>
+                </g>
+
+                <!-- MID LANE PATH -->
+                <g id="svg-lane-mid" class="transition-opacity duration-300 cursor-pointer" onclick="setMapLaneFilter('midlane')">
+                  <line x1="75" y1="325" x2="325" y2="75" stroke="#334155" stroke-width="16" stroke-linecap="round"/>
+                  <line id="path-mid-highlight" x1="75" y1="325" x2="325" y2="75" stroke="#38bdf8" stroke-width="6" stroke-linecap="round" class="lane-active"/>
+                  <!-- Equilibrium Clash Point Mid -->
+                  <circle cx="200" cy="200" r="10" fill="#0f172a" stroke="#38bdf8" stroke-width="2.5"/>
+                  <text x="200" y="203" text-anchor="middle" fill="#38bdf8" font-size="8" font-weight="bold">VS</text>
+                </g>
+
+                <!-- BOTTOM LANE PATH -->
+                <g id="svg-lane-bot" class="transition-opacity duration-300 cursor-pointer" onclick="setMapLaneFilter(currentTeam === 'radiant' ? 'safelane' : 'offlane')">
+                  <path d="M 90 352 L 348 352 L 348 90" fill="none" stroke="#334155" stroke-width="16" stroke-linecap="round" stroke-linejoin="round"/>
+                  <path id="path-bot-highlight" d="M 90 352 L 348 352 L 348 90" fill="none" stroke="#22c55e" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" class="lane-active"/>
+                  <!-- Equilibrium Clash Point Bot -->
+                  <circle cx="295" cy="352" r="9" fill="#0f172a" stroke="#22c55e" stroke-width="2.5"/>
+                  <text x="295" y="355" text-anchor="middle" fill="#4ade80" font-size="8" font-weight="bold">VS</text>
+                </g>
+
+                <!-- RADIANT BASE (Bottom Left) -->
+                <g id="base-radiant" transform="translate(52, 348)">
+                  <circle r="34" fill="#14532d" stroke="#22c55e" stroke-width="3"/>
+                  <circle r="14" fill="#22c55e" fill-opacity="0.3"/>
+                  <text y="-3" text-anchor="middle" fill="#ffffff" font-size="9" font-weight="bold">RADIANT</text>
+                  <text y="9" text-anchor="middle" fill="#86efac" font-size="7">Kiri Bawah</text>
+                </g>
+
+                <!-- DIRE BASE (Top Right) -->
+                <g id="base-dire" transform="translate(348, 52)">
+                  <circle r="34" fill="#7f1d1d" stroke="#ef4444" stroke-width="3"/>
+                  <circle r="14" fill="#ef4444" fill-opacity="0.3"/>
+                  <text y="-3" text-anchor="middle" fill="#ffffff" font-size="9" font-weight="bold">DIRE</text>
+                  <text y="9" text-anchor="middle" fill="#fca5a5" font-size="7">Kanan Atas</text>
+                </g>
+
+                <!-- Dynamic Role & Lane Labels Layer -->
+                <g id="map-labels-layer"></g>
+              </svg>
+            </div>
+
+            <!-- Dynamic Matchup Info Box -->
+            <div id="map-info-panel" class="mt-4 p-4 rounded-xl bg-[#0b0e14] border border-[#242d3d] space-y-2.5">
+              <!-- Populated by JS -->
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Section 2: Role & Position Priority -->
+      <div class="bg-[#131822] border border-[#242d3d] rounded-2xl p-6 shadow-xl">
+        <div class="flex items-center gap-2.5 mb-4">
+          <div class="p-2 rounded-xl bg-purple-500/10 text-purple-400 border border-purple-500/20">
+            <i data-lucide="users" class="w-5 h-5"></i>
+          </div>
+          <h2 class="font-display text-xl font-bold text-white">Role & Position Priority (Pos 1 - Pos 5)</h2>
+        </div>
+
+        <div class="space-y-4 text-slate-300 text-sm sm:text-base leading-relaxed">
+          <p>Di dota terdapat 5 Role (karena tiap tim terdiri dari 5 orang), yaitu <strong>Hard Carry, Mid laner, Offlaner, Soft Support, dan Hard Support</strong></p>
+          <p>dengan kategori <strong>3 core dan 2 support</strong>, yang dimaksud core adalah yang melakukan "Farming" dan mengambil "Last Hit" dan support melakukan "Warding", "Harrassing", maupun "Stacking/Pulling"</p>
+
+          <!-- Interactive Role Cards Grid -->
+          <div class="grid grid-cols-1 md:grid-cols-5 gap-3 my-4">
+            <!-- Pos 1 -->
+            <div class="p-4 rounded-xl bg-[#19202d] border border-amber-500/40 flex flex-col justify-between relative overflow-hidden">
+              <div class="absolute top-0 right-0 px-2.5 py-0.5 bg-amber-500 text-slate-950 font-extrabold text-xs rounded-bl-lg">POS 1</div>
+              <div>
+                <span class="text-[11px] font-semibold uppercase tracking-wider text-amber-400">Core • Safe Lane</span>
+                <h4 class="text-base font-bold text-white mt-0.5">Hard Carry</h4>
+                <p class="text-xs text-slate-300 mt-2">Bermain core pada Safe lane. Memiliki prioritas resource paling tinggi.</p>
+              </div>
+              <div class="mt-3 pt-2.5 border-t border-slate-700/70 text-xs text-amber-200/90">
+                <strong>Tugas:</strong> Mendapatkan resource sebanyak mungkin untuk mendapatkan item dan level sehingga bisa memenangkan war
+              </div>
+            </div>
+
+            <!-- Pos 2 -->
+            <div class="p-4 rounded-xl bg-[#19202d] border border-sky-500/40 flex flex-col justify-between relative overflow-hidden">
+              <div class="absolute top-0 right-0 px-2.5 py-0.5 bg-sky-500 text-slate-950 font-extrabold text-xs rounded-bl-lg">POS 2</div>
+              <div>
+                <span class="text-[11px] font-semibold uppercase tracking-wider text-sky-400">Core • Mid Lane</span>
+                <h4 class="text-base font-bold text-white mt-0.5">Mid Laner</h4>
+                <p class="text-xs text-slate-300 mt-2">Bermain core pada Mid.</p>
+              </div>
+              <div class="mt-3 pt-2.5 border-t border-slate-700/70 text-xs text-sky-200/90">
+                <strong>Tugas:</strong> Mengendalikan tempo game dengan memanfaatkan map pressure (rotasi ke lane yang perlu bantuan ketika objektif/tower di mid sudah hancur)
+              </div>
+            </div>
+
+            <!-- Pos 3 -->
+            <div class="p-4 rounded-xl bg-[#19202d] border border-orange-500/40 flex flex-col justify-between relative overflow-hidden">
+              <div class="absolute top-0 right-0 px-2.5 py-0.5 bg-orange-500 text-slate-950 font-extrabold text-xs rounded-bl-lg">POS 3</div>
+              <div>
+                <span class="text-[11px] font-semibold uppercase tracking-wider text-orange-400">Core • Offlane</span>
+                <h4 class="text-base font-bold text-white mt-0.5">Offlaner</h4>
+                <p class="text-xs text-slate-300 mt-2">Bermain core pada offlane.</p>
+              </div>
+              <div class="mt-3 pt-2.5 border-t border-slate-700/70 text-xs text-orange-200/90">
+                <strong>Tugas:</strong> Sebisa mungkin membuat Hard Carry musuh kesusahan farming
+              </div>
+            </div>
+
+            <!-- Pos 4 -->
+            <div class="p-4 rounded-xl bg-[#19202d] border border-teal-500/40 flex flex-col justify-between relative overflow-hidden">
+              <div class="absolute top-0 right-0 px-2.5 py-0.5 bg-teal-500 text-slate-950 font-extrabold text-xs rounded-bl-lg">POS 4</div>
+              <div>
+                <span class="text-[11px] font-semibold uppercase tracking-wider text-teal-400">Support • Offlane</span>
+                <h4 class="text-base font-bold text-white mt-0.5">Soft Support</h4>
+                <p class="text-xs text-slate-300 mt-2">Bermain support pada offlane.</p>
+              </div>
+              <div class="mt-3 pt-2.5 border-t border-slate-700/70 text-xs text-teal-200/90">
+                <strong>Tugas:</strong> Melakukan rotasi ke lane lain untuk membantu memenangkan lane
+              </div>
+            </div>
+
+            <!-- Pos 5 -->
+            <div class="p-4 rounded-xl bg-[#19202d] border border-emerald-500/40 flex flex-col justify-between relative overflow-hidden">
+              <div class="absolute top-0 right-0 px-2.5 py-0.5 bg-emerald-500 text-slate-950 font-extrabold text-xs rounded-bl-lg">POS 5</div>
+              <div>
+                <span class="text-[11px] font-semibold uppercase tracking-wider text-emerald-400">Support • Safe Lane</span>
+                <h4 class="text-base font-bold text-white mt-0.5">Hard Support</h4>
+                <p class="text-xs text-slate-300 mt-2">Bermain support pada Safe lane untuk melakukan baby sitting pada hard carry. Memiliki prioritas resource paling rendah.</p>
+              </div>
+              <div class="mt-3 pt-2.5 border-t border-slate-700/70 text-xs text-emerald-200/90">
+                <strong>Tugas:</strong> Melakukan baby sitting pada hard carry
+              </div>
+            </div>
+          </div>
+
+          <p>karena resource (seperti creep, jungle, dan objektif) di dota terbatas, tiap role memiliki prioritas mendapatkan resource yang berbeda, biasanya di dota sering dikenal sepagai "Position" atau "pos"</p>
+          <p>jadi jika kamu bermain Offlaner (Pos 3) dan ketika terdapat jungle camp serta Mid Laner (Pos 2) ada di dekat mu, lebih di prioritaskan agar jungle camp tersebut diambil oleh Mid Laner. tentu saja dengan beberapa pengecualian, contoh: ketika timer akan reset (hampir bulat 1 menit) yang mana camp tersebut akan respawn kembali, atau ketika role yang memiliki prioritas lebih tinggi berada di dekatmu</p>
+        </div>
+
+        <!-- Callout: Catatan Tambahan -->
+        <div class="mt-4 p-4 rounded-xl bg-purple-950/20 border-l-4 border-purple-500 text-xs sm:text-sm text-purple-100/90 leading-relaxed">
+          <div class="flex items-center gap-1.5 font-semibold text-purple-400 mb-1">
+            <i data-lucide="info" class="w-4 h-4"></i>
+            <span>Catatan Tambahan:</span>
+          </div>
+          Pembagian <em>Position</em> (Pos 1–5) ini sangat dinamis di pertengahan hingga akhir game. Sebagai contoh, jika <em>Offlaner</em> (Pos 3) sedang sangat kaya dan selangkah lagi mendapatkan <em>item</em> krusial seperti <em>Blink Dagger</em>, <em>Hard Carry</em> (Pos 1) atau <em>Mid Laner</em> (Pos 2) bisa saja mengalah memberikan beberapa <em>creep</em> agar tim bisa segera memulai <em>teamfight</em>.
+        </div>
+      </div>
+
+    </section>
+
+    <!-- ========================================================= -->
+    <!-- TAB 2: GAME MECHANICS (OBJEKTIF & TIMER SIMULATOR)        -->
+    <!-- ========================================================= -->
+    <section id="section-mechanics" class="hidden space-y-8 animate-fadeIn">
+
+      <!-- Interactive Timer Simulator Card -->
+      <div class="bg-[#131822] border border-[#242d3d] rounded-2xl p-6 shadow-2xl">
+        <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-5 border-b border-[#242d3d]">
+          <div>
+            <span class="text-xs font-semibold uppercase tracking-wider text-amber-400">Simulasi & Kalkulator Waktu</span>
+            <h2 class="font-display text-xl sm:text-2xl font-bold text-white flex items-center gap-2">
+              <i data-lucide="timer" class="w-6 h-6 text-amber-400"></i>
+              Dota 2 Objective Timer Simulator
+            </h2>
+            <p class="text-xs sm:text-sm text-slate-400 mt-1">Geser slider waktu atau jalankan simulasi untuk melihat objektif yang aktif, siklus Siang/Malam, dan hitung mundur Creep/Jungle.</p>
+          </div>
+
+          <!-- Play / Pause & Quick Jump Controls -->
+          <div class="flex flex-wrap items-center gap-2">
+            <button onclick="toggleTimerPlay()" id="btn-timer-play" class="px-4 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs sm:text-sm font-bold flex items-center gap-2 transition shadow-lg shadow-emerald-950/50">
+              <i data-lucide="play" class="w-4 h-4"></i>
+              <span>Mulai Simulasi</span>
+            </button>
+            <button onclick="setGameSeconds(0)" class="px-3 py-2.5 rounded-xl bg-[#19202d] hover:bg-slate-700 text-slate-300 text-xs font-semibold border border-[#242d3d] transition">
+              00:00
+            </button>
+            <button onclick="setGameSeconds(120)" class="px-3 py-2.5 rounded-xl bg-[#19202d] hover:bg-slate-700 text-slate-300 text-xs font-semibold border border-[#242d3d] transition">
+              02:00
+            </button>
+            <button onclick="setGameSeconds(300)" class="px-3 py-2.5 rounded-xl bg-[#19202d] hover:bg-slate-700 text-slate-300 text-xs font-semibold border border-[#242d3d] transition">
+              05:00
+            </button>
+            <button onclick="setGameSeconds(420)" class="px-3 py-2.5 rounded-xl bg-[#19202d] hover:bg-slate-700 text-slate-300 text-xs font-semibold border border-[#242d3d] transition">
+              07:00
+            </button>
+            <button onclick="setGameSeconds(900)" class="px-3 py-2.5 rounded-xl bg-[#19202d] hover:bg-slate-700 text-slate-300 text-xs font-semibold border border-[#242d3d] transition">
+              15:00
+            </button>
+          </div>
+        </div>
+
+        <!-- Digital Clock Display & Slider -->
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 mt-6 items-center">
+          <!-- Clock & Day/Night Badge -->
+          <div class="lg:col-span-4 bg-[#0b0e14] border border-[#242d3d] rounded-2xl p-5 flex flex-col items-center justify-center text-center">
+            <div id="day-night-badge" class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-amber-500/20 text-amber-300 border border-amber-500/30 mb-2">
+              <i data-lucide="sun" class="w-3.5 h-3.5"></i>
+              <span>SIANG (Daytime)</span>
+            </div>
+            <div id="clock-display" class="font-mono text-4xl sm:text-5xl font-extrabold text-white tracking-wider">
+              00:00
+            </div>
+            <div class="mt-3 w-full grid grid-cols-2 gap-2 text-xs">
+              <div class="p-2 rounded-lg bg-[#131822] border border-[#242d3d]">
+                <span class="text-slate-400 block">Creep Spawn</span>
+                <span id="creep-countdown" class="font-mono font-bold text-sky-400 text-sm">00:00 (NOW!)</span>
+              </div>
+              <div class="p-2 rounded-lg bg-[#131822] border border-[#242d3d]">
+                <span class="text-slate-400 block">Jungle Respawn</span>
+                <span id="jungle-countdown" class="font-mono font-bold text-emerald-400 text-sm">01:00</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Slider & Active Events Feed -->
+          <div class="lg:col-span-8 space-y-4">
+            <div>
+              <div class="flex justify-between text-xs text-slate-400 mb-2">
+                <span>00:00 (Game Start)</span>
+                <span>15:00 (Tormentor)</span>
+                <span>30:00</span>
+                <span>45:00</span>
+                <span>60:00 (Late Game)</span>
+              </div>
+              <input type="range" id="time-slider" min="0" max="3600" step="1" value="0" oninput="onSliderChange(this.value)" class="w-full">
+            </div>
+
+            <!-- Live Active Events Banner -->
+            <div class="p-4 rounded-xl bg-[#0b0e14] border border-[#242d3d]">
+              <div class="text-xs font-semibold uppercase tracking-wider text-slate-400 mb-2.5 flex items-center gap-1.5">
+                <i data-lucide="bell-ring" class="w-4 h-4 text-amber-400"></i>
+                <span>Status Objektif Pada Detik Ini:</span>
+              </div>
+              <div id="active-objectives-list" class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                <!-- Dynamically rendered -->
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Original Text Content: Objektif & Farming Efficiency -->
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+        <div class="lg:col-span-7 bg-[#131822] border border-[#242d3d] rounded-2xl p-6 shadow-xl">
+          <div class="flex items-center gap-2.5 mb-4">
+            <div class="p-2 rounded-xl bg-amber-500/10 text-amber-400 border border-amber-500/20">
+              <i data-lucide="target" class="w-5 h-5"></i>
+            </div>
+            <h2 class="font-display text-xl font-bold text-white">Objektif</h2>
+          </div>
+          <p class="text-slate-300 text-sm sm:text-base mb-4">Objektif pada Dota 2 terikat erat dengan timer.</p>
+
+          <div class="space-y-2.5 text-sm">
+            <div class="p-3 rounded-xl bg-[#19202d] border border-[#242d3d] flex items-center justify-between gap-3">
+              <span class="text-slate-200">Kontes <strong>Bounty Rune</strong> pada timer menit 0.</span>
+              <span class="px-2.5 py-1 rounded-lg bg-amber-500/20 text-amber-300 font-mono text-xs font-bold shrink-0">00:00</span>
+            </div>
+            <div class="p-3 rounded-xl bg-[#19202d] border border-[#242d3d] flex items-center justify-between gap-3">
+              <span class="text-slate-200"><span class="text-sky-400 font-semibold">[Mid]</span> Melakukan Kontes <strong>Water Rune</strong> tiap 2 menit (selama 4 menit awal).</span>
+              <span class="px-2.5 py-1 rounded-lg bg-sky-500/20 text-sky-300 font-mono text-xs font-bold shrink-0">02:00 & 04:00</span>
+            </div>
+            <div class="p-3 rounded-xl bg-[#19202d] border border-[#242d3d] flex items-center justify-between gap-3">
+              <span class="text-slate-200"><span class="text-sky-400 font-semibold">[Mid]</span> Melakukan Kontes <strong>Power Rune</strong> tiap 2 menit (setelah menit ke 4).</span>
+              <span class="px-2.5 py-1 rounded-lg bg-purple-500/20 text-purple-300 font-mono text-xs font-bold shrink-0">06:00, 08:00...</span>
+            </div>
+            <div class="p-3 rounded-xl bg-[#19202d] border border-[#242d3d] flex items-center justify-between gap-3">
+              <span class="text-slate-200"><span class="text-emerald-400 font-semibold">[SideLane]</span> Melakukan Kontes <strong>Healing Lotus</strong> tiap 3 menit.</span>
+              <span class="px-2.5 py-1 rounded-lg bg-emerald-500/20 text-emerald-300 font-mono text-xs font-bold shrink-0">Tiap 03:00</span>
+            </div>
+            <div class="p-3 rounded-xl bg-[#19202d] border border-[#242d3d] flex items-center justify-between gap-3">
+              <span class="text-slate-200"><span class="text-amber-400 font-semibold">[Mid(kalau bottle) atau SideLane]</span> Mengambil <strong>Bounty Rune</strong> tiap 4 menit.</span>
+              <span class="px-2.5 py-1 rounded-lg bg-amber-500/20 text-amber-300 font-mono text-xs font-bold shrink-0">Tiap 04:00</span>
+            </div>
+            <div class="p-3 rounded-xl bg-[#19202d] border border-[#242d3d] flex items-center justify-between gap-3">
+              <span class="text-slate-200">Melakukan push tower (dengan bantuan <strong>Catapult Wave</strong>) tiap 5 menit.</span>
+              <span class="px-2.5 py-1 rounded-lg bg-orange-500/20 text-orange-300 font-mono text-xs font-bold shrink-0">Tiap 05:00</span>
+            </div>
+            <div class="p-3 rounded-xl bg-[#19202d] border border-[#242d3d] flex items-center justify-between gap-3">
+              <span class="text-slate-200"><span class="text-emerald-400 font-semibold">[SideLane]</span> Melakukan Kontes <strong>Shrine of Wisdom</strong> tiap 7 menit.</span>
+              <span class="px-2.5 py-1 rounded-lg bg-indigo-500/20 text-indigo-300 font-mono text-xs font-bold shrink-0">Tiap 07:00</span>
+            </div>
+            <div class="p-3 rounded-xl bg-[#19202d] border border-[#242d3d] flex items-center justify-between gap-3">
+              <span class="text-slate-200">Melakukan <strong>Tormentor</strong> tiap 15 menit (Jika kuat).</span>
+              <span class="px-2.5 py-1 rounded-lg bg-red-500/20 text-red-300 font-mono text-xs font-bold shrink-0">15:00+</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right Column: Farming Efficiency & Catatan Tambahan -->
+        <div class="lg:col-span-5 space-y-6">
+          <div class="bg-[#131822] border border-[#242d3d] rounded-2xl p-6 shadow-xl">
+            <div class="flex items-center gap-2.5 mb-4">
+              <div class="p-2 rounded-xl bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+                <i data-lucide="sprout" class="w-5 h-5"></i>
+              </div>
+              <h3 class="font-display text-lg font-bold text-white">Efisiensi Farming</h3>
+            </div>
+            <p class="text-slate-300 text-sm mb-3">adapun objektif lain untuk efisiensi farming seperti:</p>
+            <ul class="space-y-3 text-sm text-slate-300 leading-relaxed">
+              <li class="p-3.5 rounded-xl bg-[#19202d] border border-[#242d3d]">
+                <strong class="text-white block mb-1">Creepwave Spawn (Tiap 30 Detik)</strong>
+                Creepwave spawn tiap 30 detik, dan akan bertemu di lane equilibrium sekitar 19 detik setelah spawn untuk mid dan <span class="px-1.5 py-0.5 rounded bg-amber-500/20 text-amber-300 font-bold">? detik</span> setelah spawn untuk side lane secara default (bagian titik tengah lane)
+              </li>
+              <li class="p-3.5 rounded-xl bg-[#19202d] border border-[#242d3d]">
+                <strong class="text-white block mb-1">Jungle Camp Spawn (Tiap 1 Menit)</strong>
+                Jungle Camp spawn tiap 1 menit dan dapat spawn ketika tidak ada unit pada area kotak spawn
+              </li>
+              <li class="p-3.5 rounded-xl bg-[#19202d] border border-[#242d3d]">
+                <strong class="text-white">Outpost</strong> milik musuh dapat diambil alih setelah salah satu Tower Tier-2 musuh hancur.
+                <div class="mt-2.5 p-3 rounded-lg bg-sky-950/30 border-l-4 border-sky-500 text-xs text-sky-100/90 leading-relaxed">
+                  <div class="flex items-center gap-1.5 font-semibold text-sky-400 mb-0.5">
+                    <i data-lucide="info" class="w-3.5 h-3.5"></i>
+                    <span>Catatan Tambahan:</span>
+                  </div>
+                  Outpost terletak di area <em>main jungle</em> masing-masing tim. Mengambil alih Outpost akan memberikan <em>vision</em> (jarak pandang) di area <em>jungle</em> sekitar serta berfungsi sebagai titik tujuan <em>Teleport</em> (TP) bagi rekan satu tim untuk mempercepat rotasi dan mengontrol peta.
+                </div>
+              </li>
+            </ul>
+          </div>
+
+          <!-- Callout: Catatan Tambahan (Jawaban & Info Pelengkap Timer) -->
+          <div class="p-5 rounded-2xl bg-amber-950/20 border-l-4 border-amber-500 text-xs sm:text-sm text-amber-100/90 leading-relaxed space-y-3 shadow-lg">
+            <div class="flex items-center gap-1.5 font-bold text-amber-400 text-sm">
+              <i data-lucide="info" class="w-4 h-4"></i>
+              <span>Catatan Tambahan (Jawaban & Info Pelengkap Timer):</span>
+            </div>
+            <ul class="space-y-2.5 list-disc pl-4">
+              <li>
+                <strong>Waktu Pertemuan Creep Side Lane (<code>? detik</code>):</strong> Di <em>side lane</em> (Safe lane & Offlane), <em>creepwave</em> bertemu secara default di titik tengah lane sekitar <strong>28–30 detik</strong> setelah <em>spawn</em> (tepat saat gelombang <em>creep</em> berikutnya baru muncul di <em>base</em>, yaitu di detik <code>:00</code> dan <code>:30</code>).
+              </li>
+              <li>
+                <strong>Day / Night Cycle (Tiap 5 Menit):</strong> Pergantian siang dan malam terjadi setiap <strong>5 menit</strong> (00:00 Siang, 05:00 Malam, 10:00 Siang, dst.). Saat malam hari, jarak pandang (<em>vision</em>) sebagian besar hero berkurang drastis sehingga waktu ini sangat ideal bagi <em>Support</em> atau <em>Mid laner</em> untuk melakukan <em>gank</em> (menyergap) ke lane lain.
+              </li>
+              <li>
+                <strong>Roshan & Aegis of the Immortal:</strong> Roshan sudah ada sejak menit 0, namun biasanya mulai dikontes pada menit <strong>15–25 ke atas</strong> tergantung kekuatan <em>lineup</em> tim. Setelah mati, Roshan akan <em>respawn</em> secara acak antara <strong>8 hingga 11 menit</strong> kemudian. Selain menjatuhkan <em>Aegis</em> (nyawa kedua), Roshan kedua dan seterusnya juga menjatuhkan <em>Cheese</em>, <em>Refresher Shard</em>, atau <em>Aghanim's Blessing</em>.
+              </li>
+              <li>
+                <strong>Twin Gates:</strong> Portal di ujung pojok kiri atas dan kanan bawah peta (dekat area <em>Healing Lotus</em>) yang bisa digunakan kapan saja sejak menit 0 untuk berpindah langsung antara <em>Safe lane</em> dan <em>Offlane</em> dengan menggunakan sejumlah kecil Mana.
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- ========================================================= -->
+    <!-- TAB 3: MIKRO & MAKRO (FILTER & CHECKLIST INTERAKTIF)      -->
+    <!-- ========================================================= -->
+    <section id="section-micromacro" class="hidden space-y-8 animate-fadeIn">
+
+      <!-- Introduction Card (Exact Text from User) -->
+      <div class="bg-[#131822] border border-[#242d3d] rounded-2xl p-6 shadow-xl">
+        <div class="flex items-center gap-2.5 mb-4">
+          <div class="p-2 rounded-xl bg-amber-500/10 text-amber-400 border border-amber-500/20">
+            <i data-lucide="brain-circuit" class="w-5 h-5"></i>
+          </div>
+          <h2 class="font-display text-xl sm:text-2xl font-bold text-white">Mikro dan Makro</h2>
+        </div>
+
+        <div class="space-y-4 text-slate-300 text-sm sm:text-base leading-relaxed">
+          <p>Mekanik dasar game pada Dota dapat dibagi menjadi 2 seperti moba pada umumnya, yaitu <strong>"Mikro"</strong> dan <strong>"Makro"</strong></p>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4 my-2">
+            <div class="p-4 rounded-xl bg-rose-950/20 border border-rose-500/30">
+              <div class="flex items-center gap-2 text-rose-400 font-bold mb-1">
+                <i data-lucide="crosshair" class="w-4 h-4"></i>
+                <span>Mekanik "Mikro"</span>
+              </div>
+              <p class="text-sm text-slate-200">Mekanik "Mikro" adalah kemampuan mekanis jari, refleks, dan penguasaan detail teknis terhadap hero yang sedang dimainkan dalam situasi jarak dekat (skirmish atau teamfight).</p>
+            </div>
+            <div class="p-4 rounded-xl bg-sky-950/20 border border-sky-500/30">
+              <div class="flex items-center gap-2 text-sky-400 font-bold mb-1">
+                <i data-lucide="compass" class="w-4 h-4"></i>
+                <span>Mekanik "Makro"</span>
+              </div>
+              <p class="text-sm text-slate-200">Mekanik "Makro" adalah pemahaman permainan (game sense), pembacaan peta (map awareness), dan strategi jangka panjang untuk menghancurkan Ancient musuh.</p>
+            </div>
+          </div>
+
+          <p>Menurut saya, hal yang dapat membuat kamu memiliki performa yang konsisten dan dapat meningkatkan chance untuk menang kamu adalah dengan menguasai Makro, karena berdasarkan pengalaman saya, Mikro dapat dengan natural dipelajari/dipahami seiring kamu konsisten bermain suatu hero / role. Akan tetapi untuk Makro, perlu untuk mempelajari untuk mengetahui dasar dari cara melakukannya serta dengan ataupun tanpa sadar dapat meingimplementasikannya kedalam gameplay kamu secara konsisten.</p>
+
+          <p>Hal ini dikarenakan ketika bermain kamu akan lebih fokus terhadap apa yang ada di depan mu sehingga sering lupa untuk mengimplementasikan Makro secara konsisten, Untuk membuktikannya cara paling mudah dan ampuh adalah coba download replay dari salah satu game kamu (disarankan game yang kalah), dan coba perhatikan pergerakan/aksi yang kamu lakukan. Biasanya kamu akan merasa seperti <span class="italic text-amber-300">"Kok aku gak ngelakuin ini ya?"</span>, <span class="italic text-amber-300">"kok pas ini aku diem / muter2 ga jelas ya?"</span>, <span class="italic text-amber-300">"harusnya aku ..."</span>, dan sebagainya.</p>
+
+          <p class="font-medium text-white">Mikro dan Makro sendiri terdiri dari beberapa layer mulai dari yang paling mudah sampai yang termasuk agak susah dan perlu konsistensi, jika harus diurut kan dari yang paling mudah dipelajari dan diimplementasikan, menurut saya akan saya urutkan menjadi seperti berikut:</p>
+        </div>
+      </div>
+
+      <!-- Interactive Progress Tracker & Filter Bar -->
+      <div class="bg-[#131822] border border-[#242d3d] rounded-2xl p-5 sm:p-6 shadow-xl">
+        <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-5">
+          <div>
+            <h3 class="text-lg font-bold text-white flex items-center gap-2">
+              <i data-lucide="check-square" class="w-5 h-5 text-emerald-400"></i>
+              Checklist Penguasaan Layer Mekanik (Termudah → Tersulit)
+            </h3>
+            <p class="text-xs text-slate-400 mt-0.5">Centang mekanik yang sudah kamu kuasai untuk melacak progres belajarmu (tersimpan otomatis di browser).</p>
+          </div>
+
+          <!-- Filter Buttons -->
+          <div class="flex flex-wrap items-center gap-2">
+            <button onclick="setMechanicFilter('all')" id="mech-filter-all" class="px-3.5 py-2 rounded-xl text-xs font-bold bg-amber-500 text-slate-950 transition">
+              Semua (13)
+            </button>
+            <button onclick="setMechanicFilter('mikro')" id="mech-filter-mikro" class="px-3.5 py-2 rounded-xl text-xs font-bold bg-[#19202d] text-rose-400 border border-rose-500/30 hover:bg-rose-950/30 transition">
+              Mikro (7 Layer)
+            </button>
+            <button onclick="setMechanicFilter('makro')" id="mech-filter-makro" class="px-3.5 py-2 rounded-xl text-xs font-bold bg-[#19202d] text-sky-400 border border-sky-500/30 hover:bg-sky-950/30 transition">
+              Makro (6 Layer)
+            </button>
+            <button onclick="resetMechanicChecklist()" class="px-3 py-2 rounded-xl text-xs font-medium text-slate-400 hover:text-white bg-[#0b0e14] border border-[#242d3d] transition" title="Reset Checklist">
+              Reset
+            </button>
+          </div>
+        </div>
+
+        <!-- Progress Bars -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+          <div class="p-3.5 rounded-xl bg-[#0b0e14] border border-[#242d3d]">
+            <div class="flex justify-between text-xs mb-1.5">
+              <span class="font-semibold text-slate-300">Total Penguasaan</span>
+              <span id="prog-total-text" class="font-mono font-bold text-amber-400">0 / 13 (0%)</span>
+            </div>
+            <div class="w-full h-2.5 bg-[#19202d] rounded-full overflow-hidden">
+              <div id="prog-total-bar" class="h-full bg-gradient-to-r from-amber-500 to-yellow-400 transition-all duration-300" style="width: 0%"></div>
+            </div>
+          </div>
+
+          <div class="p-3.5 rounded-xl bg-[#0b0e14] border border-[#242d3d]">
+            <div class="flex justify-between text-xs mb-1.5">
+              <span class="font-semibold text-rose-300">Layer Mikro</span>
+              <span id="prog-mikro-text" class="font-mono font-bold text-rose-400">0 / 7 (0%)</span>
+            </div>
+            <div class="w-full h-2.5 bg-[#19202d] rounded-full overflow-hidden">
+              <div id="prog-mikro-bar" class="h-full bg-rose-500 transition-all duration-300" style="width: 0%"></div>
+            </div>
+          </div>
+
+          <div class="p-3.5 rounded-xl bg-[#0b0e14] border border-[#242d3d]">
+            <div class="flex justify-between text-xs mb-1.5">
+              <span class="font-semibold text-sky-300">Layer Makro</span>
+              <span id="prog-makro-text" class="font-mono font-bold text-sky-400">0 / 6 (0%)</span>
+            </div>
+            <div class="w-full h-2.5 bg-[#19202d] rounded-full overflow-hidden">
+              <div id="prog-makro-bar" class="h-full bg-sky-500 transition-all duration-300" style="width: 0%"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Checklist Cards Container -->
+        <div id="mechanics-cards-grid" class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <!-- Populated by JS -->
+        </div>
+
+        <!-- Callout: Catatan Tambahan (Poin Pelengkap Mikro & Makro) -->
+        <div class="mt-6 p-5 rounded-2xl bg-sky-950/20 border-l-4 border-sky-500 text-xs sm:text-sm text-sky-100/90 leading-relaxed space-y-2.5">
+          <div class="flex items-center gap-1.5 font-bold text-sky-400 text-sm">
+            <i data-lucide="info" class="w-4 h-4"></i>
+            <span>Catatan Tambahan (Poin Pelengkap Mikro & Makro):</span>
+          </div>
+          <ul class="space-y-2 list-disc pl-4">
+            <li>
+              <strong>Tambahan Mikro — Item & Cooldown Checking:</strong> Membiasakan diri mengklik hero musuh saat terlihat di peta untuk mengecek isi <em>inventory</em> mereka (misalnya mendeteksi apakah lawan sudah punya <em>Blink Dagger</em>, <em>Black King Bar</em>, atau membawa <em>Observer Ward</em>) sebelum memutuskan untuk menyerang.
+            </li>
+            <li>
+              <strong>Tambahan Makro — Buyback Management:</strong> Menyimpan sejumlah <em>gold</em> cadangan di fase <em>late game</em> (menit 35+) agar bisa hidup kembali secara instan (<em>Buyback</em>) untuk mempertahankan <em>High Ground</em> atau membalikkan keadaan saat <em>teamfight</em> penentuan.
+            </li>
+            <li>
+              <strong>Tambahan Makro — Smoke of Deceit Usage:</strong> Menggunakan item <em>Smoke of Deceit</em> bersama tim untuk bergerak menembus <em>Observer Ward</em> musuh tanpa terdeteksi demi menculik hero inti lawan (<em>pick-off</em>) atau menyelinap ke area Roshan.
+            </li>
+          </ul>
+        </div>
+      </div>
+
+    </section>
+
+  </main>
+
+  <!-- Footer -->
+  <footer class="border-t border-[#242d3d] bg-[#0b0e14] py-5 text-center text-xs text-slate-500">
+    <div class="max-w-7xl mx-auto px-4">
+      Dota 2 Interactive Guide • Disusun berdasarkan materi & urutan layer mekanik pengguna
+    </div>
+  </footer>
+
+  <!-- Interactive Application Script -->
+  <script>
+    // =========================================================================
+    // 1. TAB NAVIGATION LOGIC
+    // =========================================================================
+    function switchTab(tabName) {
+      const sections = ['general', 'mechanics', 'micromacro'];
+      sections.forEach(sec => {
+        const el = document.getElementById(`section-${sec}`);
+        const btn = document.getElementById(`tab-${sec}`);
+        if (sec === tabName) {
+          el.classList.remove('hidden');
+          btn.className = 'tab-btn flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs sm:text-sm font-semibold transition-all duration-200 bg-amber-500/20 text-amber-300 border border-amber-500/40 shadow-sm';
+        } else {
+          el.classList.add('hidden');
+          btn.className = 'tab-btn flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs sm:text-sm font-semibold transition-all duration-200 text-slate-400 hover:text-white hover:bg-[#19202d]';
+        }
+      });
+    }
+
+    // =========================================================================
+    // 2. INTERACTIVE SVG MAP LOGIC (GAME GENERAL)
+    // =========================================================================
+    let currentTeam = 'radiant';
+    let currentLaneFilter = 'all';
+
+    function setMapTeam(team) {
+      currentTeam = team;
+      const btnRad = document.getElementById('btn-map-radiant');
+      const btnDire = document.getElementById('btn-map-dire');
+      const glowRad = document.getElementById('glow-radiant');
+      const glowDire = document.getElementById('glow-dire');
+
+      if (team === 'radiant') {
+        btnRad.className = 'px-3.5 py-2 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5 bg-emerald-600 text-white shadow-lg shadow-emerald-900/50';
+        btnDire.className = 'px-3.5 py-2 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5 text-slate-400 hover:text-white';
+        glowRad.setAttribute('opacity', '1');
+        glowDire.setAttribute('opacity', '0.25');
+      } else {
+        btnDire.className = 'px-3.5 py-2 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5 bg-red-600 text-white shadow-lg shadow-red-900/50';
+        btnRad.className = 'px-3.5 py-2 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5 text-slate-400 hover:text-white';
+        glowDire.setAttribute('opacity', '1');
+        glowRad.setAttribute('opacity', '0.25');
+      }
+      renderMapVisuals();
+    }
+
+    function setMapLaneFilter(filter) {
+      currentLaneFilter = filter;
+      const filters = ['all', 'safelane', 'midlane', 'offlane'];
+      filters.forEach(f => {
+        const btn = document.getElementById(`lane-filter-${f}`);
+        if (f === filter) {
+          btn.className = 'px-3 py-1.5 rounded-lg text-xs font-bold bg-amber-500 text-slate-950 border border-amber-400 transition shadow';
+        } else {
+          btn.className = 'px-3 py-1.5 rounded-lg text-xs font-medium bg-[#19202d] text-slate-300 border border-[#242d3d] hover:border-amber-500/50 transition';
+        }
+      });
+      renderMapVisuals();
+    }
+
+    function renderMapVisuals() {
+      const topGroup = document.getElementById('svg-lane-top');
+      const midGroup = document.getElementById('svg-lane-mid');
+      const botGroup = document.getElementById('svg-lane-bot');
+      const labelsLayer = document.getElementById('map-labels-layer');
+      const infoPanel = document.getElementById('map-info-panel');
+
+      // Determine which physical lane corresponds to safelane/offlane for selected team
+      const isRadiant = currentTeam === 'radiant';
+      const topRoleType = isRadiant ? 'offlane' : 'safelane';
+      const botRoleType = isRadiant ? 'safelane' : 'offlane';
+
+      // Set opacity based on filter
+      topGroup.style.opacity = (currentLaneFilter === 'all' || currentLaneFilter === topRoleType) ? '1' : '0.2';
+      midGroup.style.opacity = (currentLaneFilter === 'all' || currentLaneFilter === 'midlane') ? '1' : '0.2';
+      botGroup.style.opacity = (currentLaneFilter === 'all' || currentLaneFilter === botRoleType) ? '1' : '0.2';
+
+      // Color highlights based on team
+      const pathTop = document.getElementById('path-top-highlight');
+      const pathBot = document.getElementById('path-bot-highlight');
+      if (isRadiant) {
+        pathBot.setAttribute('stroke', '#22c55e'); // Safe lane green
+        pathTop.setAttribute('stroke', '#f97316'); // Offlane orange
+      } else {
+        pathTop.setAttribute('stroke', '#22c55e'); // Safe lane green
+        pathBot.setAttribute('stroke', '#f97316'); // Offlane orange
+      }
+
+      // Render SVG badges for lanes & role placements
+      let svgHTML = '';
+      if (isRadiant) {
+        // Radiant Top = Offlane (Pos 3 & 4)
+        svgHTML += `
+          <g transform="translate(185, 32)" opacity="${(currentLaneFilter === 'all' || currentLaneFilter === 'offlane') ? 1 : 0.25}">
+            <rect x="-72" y="-12" width="144" height="24" rx="6" fill="#0f172a" stroke="#f97316" stroke-width="1.5"/>
+            <text y="3" text-anchor="middle" fill="#fdba74" font-size="8.5" font-weight="bold">TOP: OFFLANE (Pos 3 & 4)</text>
+          </g>
+          <g transform="translate(125, 76)" opacity="${(currentLaneFilter === 'all' || currentLaneFilter === 'offlane') ? 1 : 0.25}">
+            <rect x="-56" y="-9" width="112" height="18" rx="4" fill="#7f1d1d" fill-opacity="0.85"/>
+            <text y="3" text-anchor="middle" fill="#fecaca" font-size="7.5">vs Safe Lane Dire (Pos 1 & 5)</text>
+          </g>
+        `;
+        // Radiant Mid = Mid (Pos 2)
+        svgHTML += `
+          <g transform="translate(200, 174)" opacity="${(currentLaneFilter === 'all' || currentLaneFilter === 'midlane') ? 1 : 0.25}">
+            <rect x="-58" y="-11" width="116" height="22" rx="6" fill="#0f172a" stroke="#38bdf8" stroke-width="1.5"/>
+            <text y="3" text-anchor="middle" fill="#7dd3fc" font-size="8.5" font-weight="bold">MID: POS 2 vs POS 2</text>
+          </g>
+        `;
+        // Radiant Bot = Safe Lane (Pos 1 & 5)
+        svgHTML += `
+          <g transform="translate(215, 376)" opacity="${(currentLaneFilter === 'all' || currentLaneFilter === 'safelane') ? 1 : 0.25}">
+            <rect x="-76" y="-12" width="152" height="24" rx="6" fill="#0f172a" stroke="#22c55e" stroke-width="1.5"/>
+            <text y="3" text-anchor="middle" fill="#86efac" font-size="8.5" font-weight="bold">BOT: SAFE LANE (Pos 1 & 5)</text>
+          </g>
+          <g transform="translate(275, 326)" opacity="${(currentLaneFilter === 'all' || currentLaneFilter === 'safelane') ? 1 : 0.25}">
+            <rect x="-54" y="-9" width="108" height="18" rx="4" fill="#7f1d1d" fill-opacity="0.85"/>
+            <text y="3" text-anchor="middle" fill="#fecaca" font-size="7.5">vs Offlane Dire (Pos 3 & 4)</text>
+          </g>
+        `;
+      } else {
+        // Dire Top = Safe Lane (Pos 1 & 5)
+        svgHTML += `
+          <g transform="translate(185, 32)" opacity="${(currentLaneFilter === 'all' || currentLaneFilter === 'safelane') ? 1 : 0.25}">
+            <rect x="-76" y="-12" width="152" height="24" rx="6" fill="#0f172a" stroke="#22c55e" stroke-width="1.5"/>
+            <text y="3" text-anchor="middle" fill="#86efac" font-size="8.5" font-weight="bold">TOP: SAFE LANE (Pos 1 & 5)</text>
+          </g>
+          <g transform="translate(130, 76)" opacity="${(currentLaneFilter === 'all' || currentLaneFilter === 'safelane') ? 1 : 0.25}">
+            <rect x="-60" y="-9" width="120" height="18" rx="4" fill="#14532d" fill-opacity="0.9"/>
+            <text y="3" text-anchor="middle" fill="#bbf7d0" font-size="7.5">vs Offlane Radiant (Pos 3 & 4)</text>
+          </g>
+        `;
+        // Dire Mid = Mid (Pos 2)
+        svgHTML += `
+          <g transform="translate(200, 174)" opacity="${(currentLaneFilter === 'all' || currentLaneFilter === 'midlane') ? 1 : 0.25}">
+            <rect x="-58" y="-11" width="116" height="22" rx="6" fill="#0f172a" stroke="#38bdf8" stroke-width="1.5"/>
+            <text y="3" text-anchor="middle" fill="#7dd3fc" font-size="8.5" font-weight="bold">MID: POS 2 vs POS 2</text>
+          </g>
+        `;
+        // Dire Bot = Offlane (Pos 3 & 4)
+        svgHTML += `
+          <g transform="translate(215, 376)" opacity="${(currentLaneFilter === 'all' || currentLaneFilter === 'offlane') ? 1 : 0.25}">
+            <rect x="-72" y="-12" width="144" height="24" rx="6" fill="#0f172a" stroke="#f97316" stroke-width="1.5"/>
+            <text y="3" text-anchor="middle" fill="#fdba74" font-size="8.5" font-weight="bold">BOT: OFFLANE (Pos 3 & 4)</text>
+          </g>
+          <g transform="translate(268, 326)" opacity="${(currentLaneFilter === 'all' || currentLaneFilter === 'offlane') ? 1 : 0.25}">
+            <rect x="-62" y="-9" width="124" height="18" rx="4" fill="#14532d" fill-opacity="0.9"/>
+            <text y="3" text-anchor="middle" fill="#bbf7d0" font-size="7.5">vs Safe Lane Radiant (Pos 1 & 5)</text>
+          </g>
+        `;
+      }
+      labelsLayer.innerHTML = svgHTML;
+
+      // Update Detailed Matchup Text Below Map
+      const teamBadge = isRadiant
+        ? `<span class="text-emerald-400 font-bold">RADIANT (Kiri Bawah - Hijau)</span>`
+        : `<span class="text-red-400 font-bold">DIRE (Kanan Atas - Merah)</span>`;
+
+      let matchupDetails = '';
+      if (currentLaneFilter === 'all') {
+        matchupDetails = `
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-2 text-xs pt-1">
+            <div class="p-2.5 rounded-lg bg-[#131822] border border-emerald-500/30">
+              <div class="font-bold text-emerald-400">Safe Lane (${isRadiant ? 'Bawah' : 'Atas'})</div>
+              <div class="text-slate-300 mt-0.5">Pos 1 & Pos 5 kamu <strong>vs</strong> Pos 3 & Pos 4 ${isRadiant ? 'Dire' : 'Radiant'}</div>
+            </div>
+            <div class="p-2.5 rounded-lg bg-[#131822] border border-sky-500/30">
+              <div class="font-bold text-sky-400">Mid Lane (Tengah)</div>
+              <div class="text-slate-300 mt-0.5">Pos 2 kamu <strong>vs</strong> Pos 2 ${isRadiant ? 'Dire' : 'Radiant'} (Role Sama)</div>
+            </div>
+            <div class="p-2.5 rounded-lg bg-[#131822] border border-orange-500/30">
+              <div class="font-bold text-orange-400">Offlane (${isRadiant ? 'Atas' : 'Bawah'})</div>
+              <div class="text-slate-300 mt-0.5">Pos 3 & Pos 4 kamu <strong>vs</strong> Pos 1 & Pos 5 ${isRadiant ? 'Dire' : 'Radiant'}</div>
+            </div>
+          </div>
+        `;
+      } else if (currentLaneFilter === 'safelane') {
+        matchupDetails = `
+          <p class="text-xs text-slate-300">
+            Pada tim ${teamBadge}, <strong>Safe Lane berada di ${isRadiant ? 'BAWAH' : 'ATAS'}</strong>. Diisi oleh <strong>Hard Carry (Pos 1)</strong> dan <strong>Hard Support (Pos 5)</strong>. Lawan di lane ini adalah <strong>Offlaner (Pos 3) & Soft Support (Pos 4)</strong> tim ${isRadiant ? 'Dire' : 'Radiant'}.
+          </p>
+        `;
+      } else if (currentLaneFilter === 'midlane') {
+        matchupDetails = `
+          <p class="text-xs text-slate-300">
+            Pada tim ${teamBadge}, <strong>Mid Lane berada di TENGAH</strong>. Diisi oleh <strong>Mid Laner (Pos 2)</strong> secara solo (1v1). Ini adalah satu-satunya lane di mana lawanmu memiliki role yang sama persis (<strong>Mid Laner Pos 2</strong>).
+          </p>
+        `;
+      } else if (currentLaneFilter === 'offlane') {
+        matchupDetails = `
+          <p class="text-xs text-slate-300">
+            Pada tim ${teamBadge}, <strong>Offlane berada di ${isRadiant ? 'ATAS' : 'BAWAH'}</strong>. Diisi oleh <strong>Offlaner (Pos 3)</strong> dan <strong>Soft Support (Pos 4)</strong>. Tugas utamanya mengganggu <strong>Hard Carry (Pos 1)</strong> lawan yang ditemani <strong>Hard Support (Pos 5)</strong>.
+          </p>
+        `;
+      }
+
+      infoPanel.innerHTML = `
+        <div class="flex items-center justify-between text-xs">
+          <span>Perspektif Aktif: ${teamBadge}</span>
+          <span class="text-slate-400">Cek posisi tim di HUD atas saat Drafting</span>
+        </div>
+        ${matchupDetails}
+      `;
+    }
+
+    // =========================================================================
+    // 3. OBJECTIVE TIMER SIMULATOR LOGIC (GAME MECHANICS)
+    // =========================================================================
+    let gameSeconds = 0;
+    let timerInterval = null;
+
+    function formatTime(sec) {
+      const m = Math.floor(sec / 60);
+      const s = sec % 60;
+      return `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
+    }
+
+    function toggleTimerPlay() {
+      const btn = document.getElementById('btn-timer-play');
+      if (timerInterval) {
+        clearInterval(timerInterval);
+        timerInterval = null;
+        btn.innerHTML = `<i data-lucide="play" class="w-4 h-4"></i><span>Mulai Simulasi</span>`;
+        btn.className = 'px-4 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs sm:text-sm font-bold flex items-center gap-2 transition shadow-lg shadow-emerald-950/50';
+      } else {
+        timerInterval = setInterval(() => {
+          if (gameSeconds < 3600) {
+            gameSeconds++;
+            document.getElementById('time-slider').value = gameSeconds;
+            updateTimerUI();
+          } else {
+            toggleTimerPlay();
+          }
+        }, 1000);
+        btn.innerHTML = `<i data-lucide="pause" class="w-4 h-4"></i><span>Jeda Simulasi</span>`;
+        btn.className = 'px-4 py-2.5 rounded-xl bg-amber-600 hover:bg-amber-500 text-white text-xs sm:text-sm font-bold flex items-center gap-2 transition shadow-lg shadow-amber-950/50';
+      }
+      lucide.createIcons();
+    }
+
+    function setGameSeconds(sec) {
+      gameSeconds = sec;
+      document.getElementById('time-slider').value = sec;
+      updateTimerUI();
+    }
+
+    function onSliderChange(val) {
+      gameSeconds = parseInt(val, 10);
+      updateTimerUI();
+    }
+
+    function updateTimerUI() {
+      const mins = Math.floor(gameSeconds / 60);
+      const secs = gameSeconds % 60;
+
+      // Update Clock
+      document.getElementById('clock-display').textContent = formatTime(gameSeconds);
+
+      // Day / Night Cycle (Every 5 minutes: 0-4m Day, 5-9m Night, 10-14m Day, etc.)
+      const cycleBlock = Math.floor(mins / 5);
+      const isNight = cycleBlock % 2 === 1;
+      const dayNightBadge = document.getElementById('day-night-badge');
+      if (isNight) {
+        dayNightBadge.className = 'inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-indigo-500/20 text-indigo-300 border border-indigo-500/40 mb-2';
+        dayNightBadge.innerHTML = `<i data-lucide="moon" class="w-3.5 h-3.5"></i><span>MALAM (Nighttime — Vision Berkurang!)</span>`;
+      } else {
+        dayNightBadge.className = 'inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-amber-500/20 text-amber-300 border border-amber-500/30 mb-2';
+        dayNightBadge.innerHTML = `<i data-lucide="sun" class="w-3.5 h-3.5"></i><span>SIANG (Daytime)</span>`;
+      }
+
+      // Creepwave Countdown (Spawns every 30s)
+      const creepRem = secs % 30 === 0 ? 0 : 30 - (secs % 30);
+      const creepEl = document.getElementById('creep-countdown');
+      if (creepRem === 0) {
+        creepEl.textContent = 'SPAWN NOW!';
+        creepEl.className = 'font-mono font-bold text-amber-400 text-sm animate-pulse';
+      } else {
+        creepEl.textContent = `00:${String(creepRem).padStart(2, '0')} lagi`;
+        creepEl.className = 'font-mono font-bold text-sky-400 text-sm';
+      }
+
+      // Jungle Camp Countdown (Spawns every 60s, starting at 01:00)
+      const jungleRem = secs === 0 && mins > 0 ? 0 : 60 - secs;
+      const jungleEl = document.getElementById('jungle-countdown');
+      if (jungleRem === 0) {
+        jungleEl.textContent = 'SPAWN NOW!';
+        jungleEl.className = 'font-mono font-bold text-amber-400 text-sm animate-pulse';
+      } else if (jungleRem <= 7 && mins >= 1) {
+        jungleEl.textContent = `00:${String(jungleRem).padStart(2, '0')} (Waktunya Stack!)`;
+        jungleEl.className = 'font-mono font-bold text-amber-300 text-sm';
+      } else {
+        jungleEl.textContent = `00:${String(jungleRem).padStart(2, '0')} lagi`;
+        jungleEl.className = 'font-mono font-bold text-emerald-400 text-sm';
+      }
+
+      // Calculate Active & Upcoming Objectives
+      const objectives = [];
+
+      // 1. Bounty Rune (Min 0 & every 4 mins)
+      const isBountyNow = (mins % 4 === 0 && secs <= 15);
+      const nextBountyMin = mins % 4 === 0 && secs === 0 ? mins : (Math.floor(mins / 4) + 1) * 4;
+      objectives.push({
+        title: 'Bounty Rune (Min 0 & Tiap 4m)',
+        active: isBountyNow,
+        status: isBountyNow ? 'AKTIF / KONTES SEKARANG!' : `Berikutnya menit ${String(nextBountyMin).padStart(2, '0')}:00`,
+        color: 'amber'
+      });
+
+      // 2. Water Rune (Min 2 & 4) vs Power Rune (Every 2 mins after Min 4)
+      if (mins < 4 || (mins === 4 && secs <= 15)) {
+        const isWaterNow = ((mins === 2 || mins === 4) && secs <= 15);
+        const nextWater = mins < 2 ? 2 : 4;
+        objectives.push({
+          title: '[Mid] Water Rune (Min 2 & 4)',
+          active: isWaterNow,
+          status: isWaterNow ? 'AKTIF DI RIVER MID!' : `Berikutnya menit 0${nextWater}:00`,
+          color: 'sky'
+        });
+      } else {
+        const isPowerNow = (mins >= 6 && mins % 2 === 0 && secs <= 15);
+        const nextPower = mins % 2 === 0 && secs === 0 ? mins : (Math.floor(mins / 2) + 1) * 2;
+        objectives.push({
+          title: '[Mid] Power Rune (Tiap 2m >4m)',
+          active: isPowerNow,
+          status: isPowerNow ? 'AKTIF DI RIVER MID!' : `Berikutnya menit ${String(nextPower).padStart(2, '0')}:00`,
+          color: 'purple'
+        });
+      }
+
+      // 3. Healing Lotus (Every 3 mins)
+      const isLotusNow = (mins > 0 && mins % 3 === 0 && secs <= 15);
+      const nextLotus = (Math.floor(mins / 3) + 1) * 3;
+      objectives.push({
+        title: '[SideLane] Healing Lotus (Tiap 3m)',
+        active: isLotusNow,
+        status: isLotusNow ? 'SPAWN DI LOTUS POOL!' : `Berikutnya menit ${String(nextLotus).padStart(2, '0')}:00`,
+        color: 'emerald'
+      });
+
+      // 4. Catapult Wave (Every 5 mins)
+      const isCatapultNow = (mins > 0 && mins % 5 === 0 && secs <= 15);
+      const nextCatapult = (Math.floor(mins / 5) + 1) * 5;
+      objectives.push({
+        title: 'Catapult Wave Push (Tiap 5m)',
+        active: isCatapultNow,
+        status: isCatapultNow ? 'CATAPULT SPAWN — PUSH TOWER!' : `Berikutnya menit ${String(nextCatapult).padStart(2, '0')}:00`,
+        color: 'orange'
+      });
+
+      // 5. Shrine of Wisdom (Every 7 mins)
+      const isWisdomNow = (mins > 0 && mins % 7 === 0 && secs <= 15);
+      const nextWisdom = (Math.floor(mins / 7) + 1) * 7;
+      objectives.push({
+        title: '[SideLane] Shrine of Wisdom (Tiap 7m)',
+        active: isWisdomNow,
+        status: isWisdomNow ? 'AKTIF — AMBIL XP RUNE!' : `Berikutnya menit ${String(nextWisdom).padStart(2, '0')}:00`,
+        color: 'indigo'
+      });
+
+      // 6. Tormentor (15 mins+) & Roshan
+      const isTormentorReady = mins >= 15;
+      objectives.push({
+        title: 'Tormentor (15:00+) & Roshan',
+        active: isTormentorReady,
+        status: isTormentorReady ? 'TORMENTOR SUDAH SPAWN (Jika kuat)' : `Tormentor muncul dalam ${15 - mins} menit`,
+        color: 'red'
+      });
+
+      const listContainer = document.getElementById('active-objectives-list');
+      listContainer.innerHTML = objectives.map(obj => {
+        const activeClasses = obj.active
+          ? `bg-${obj.color}-500/20 border-${obj.color}-500 text-white shadow-md`
+          : `bg-[#131822] border-[#242d3d] text-slate-400`;
+        const dotClass = obj.active ? `bg-${obj.color}-400 animate-ping` : `bg-slate-600`;
+        return `
+          <div class="p-2.5 rounded-xl border ${activeClasses} flex items-center justify-between gap-2 transition-all">
+            <div class="flex items-center gap-2 min-w-0">
+              <span class="w-2 h-2 rounded-full shrink-0 ${dotClass}"></span>
+              <span class="text-xs font-semibold truncate">${obj.title}</span>
+            </div>
+            <span class="text-[11px] font-mono shrink-0 ${obj.active ? 'font-bold text-amber-300' : 'text-slate-500'}">${obj.status}</span>
+          </div>
+        `;
+      }).join('');
+
+      lucide.createIcons();
+    }
+
+    // =========================================================================
+    // 4. MIKRO & MAKRO CHECKLIST & FILTER LOGIC (EXACT USER CONTENT)
+    // =========================================================================
+    const mechanicsData = [
+      // MIKRO (7 Layers - Ordered from easiest to hardest as written by user)
+      {
+        id: 'mikro-1',
+        type: 'mikro',
+        layer: 1,
+        difficulty: 'Layer 1 • Paling Mudah',
+        title: 'Last Hitting & Denying',
+        desc: 'Ketepatan waktu (timing) memukul creep untuk mendapatkan gold dan mencegah musuh mendapatkan XP/gold.'
+      },
+      {
+        id: 'mikro-2',
+        type: 'mikro',
+        layer: 2,
+        difficulty: 'Layer 2 • Dasar',
+        title: 'Skill Execution & Combo',
+        desc: 'Kecepatan dan akurasi menekan tombol skill dan item secara berurutan (misalnya: Blink Dagger → Hex → stun berantai).'
+      },
+      {
+        id: 'mikro-3',
+        type: 'mikro',
+        layer: 3,
+        difficulty: 'Layer 3 • Menengah',
+        title: 'Power Spike & Tempo',
+        desc: 'Memahami kapan tim kita berada di titik terkuat (misalnya saat carry selesai membuat BKB) untuk memaksa teamfight, dan kapan harus bermain defensif menghindar dari perang sambil melakukan farming.'
+      },
+      {
+        id: 'mikro-4',
+        type: 'mikro',
+        layer: 4,
+        difficulty: 'Layer 4 • Menengah',
+        title: 'Micro-management Unit',
+        desc: 'Mengendalikan lebih dari satu unit secara bersamaan menggunakan control groups (seperti ilusi Naga Siren, summon Chen/Enchantress, atau Meepo).'
+      },
+      {
+        id: 'mikro-5',
+        type: 'mikro',
+        layer: 5,
+        difficulty: 'Layer 5 • Lanjutan',
+        title: 'Animation Canceling & Turn Rate',
+        desc: 'Membatalkan animasi backswing setelah serangan atau skill keluar agar bisa bergerak lebih cepat (orb-walking), serta memperhitungkan waktu putar badan hero.'
+      },
+      {
+        id: 'mikro-6',
+        type: 'mikro',
+        layer: 6,
+        difficulty: 'Layer 6 • Lanjutan',
+        title: 'Dodging & Positioning (Teamfight)',
+        desc: 'Menghindari proyektil musuh menggunakan Manta Style, Eul\'s Scepter, atau Blink, serta menjaga posisi agar tidak mudah diinisiasi lawan.'
+      },
+      {
+        id: 'mikro-7',
+        type: 'mikro',
+        layer: 7,
+        difficulty: 'Layer 7 • Tersulit / Detail',
+        title: 'Tread Switching',
+        desc: 'Mengganti atribut Power Treads ke Intelligence sebelum mengeluarkan skill agar lebih hemat mana, lalu mengembalikannya ke Strength/Agility.'
+      },
+
+      // MAKRO (6 Layers - Ordered from easiest to hardest as written by user)
+      {
+        id: 'makro-1',
+        type: 'makro',
+        layer: 1,
+        difficulty: 'Layer 1 • Paling Mudah',
+        title: 'Map Awareness & Vision Control',
+        desc: 'Membaca pergerakan musuh di minimap (menyadari kapan musuh menghilang dari lane untuk melakukan gank), serta menentukan titik penempatan Observer dan Sentry Ward yang strategis.'
+      },
+      {
+        id: 'makro-2',
+        type: 'makro',
+        layer: 2,
+        difficulty: 'Layer 2 • Dasar',
+        title: 'Objective Gaming',
+        desc: 'Menentukan prioritas dan waktu yang tepat untuk mengambil objektif besar seperti mengkontes Rune, menghancurkan Tower, membunuh Roshan (mengamankan Aegis), atau mengambil Tormentor.'
+      },
+      {
+        id: 'makro-3',
+        type: 'makro',
+        layer: 3,
+        difficulty: 'Layer 3 • Menengah',
+        title: 'Drafting & Itemization',
+        desc: 'Memilih hero yang saling bersinergi dan meng-counter komposisi musuh sejak fase draft, serta membeli item yang reaktif terhadap ancaman lawan (misalnya membuat Black King Bar atau Spirit Vessel).'
+      },
+      {
+        id: 'makro-4',
+        type: 'makro',
+        layer: 4,
+        difficulty: 'Layer 4 • Menengah',
+        title: 'Creep Aggro & Lane Equilibrium',
+        desc: 'Memanipulasi AI creep musuh (dengan klik kanan ke hero lawan) agar mendekat ke arah kita, serta menjaga posisi pertemuan creep tetap aman di dekat tower sendiri.'
+      },
+      {
+        id: 'makro-5',
+        type: 'makro',
+        layer: 5,
+        difficulty: 'Layer 5 • Lanjutan',
+        title: 'Wave Management & Split Pushing',
+        desc: 'Mendorong gelombang creep (shoving waves) untuk menciptakan tekanan di satu sisi peta guna memaksa musuh berpencar, sehingga tim memiliki ruang lebih luas di sisi lain.'
+      },
+      {
+        id: 'makro-6',
+        type: 'makro',
+        layer: 6,
+        difficulty: 'Layer 6 • Tersulit / Konsistensi',
+        title: 'Rotasi & Timing',
+        desc: 'Mengetahui kapan harus melakukan Teleport untuk membantu lane lain, mengamankan Power Rune setiap menit genap, Wisdom Shrine setiap menit kelipatan 7, atau stacking neutral camp.'
+      }
+    ];
+
+    let currentMechanicFilter = 'all';
+    let checkedMechanics = JSON.parse(localStorage.getItem('dota2_checked_mechanics') || '{}');
+
+    function setMechanicFilter(filter) {
+      currentMechanicFilter = filter;
+      const btnAll = document.getElementById('mech-filter-all');
+      const btnMikro = document.getElementById('mech-filter-mikro');
+      const btnMakro = document.getElementById('mech-filter-makro');
+
+      btnAll.className = filter === 'all'
+        ? 'px-3.5 py-2 rounded-xl text-xs font-bold bg-amber-500 text-slate-950 transition'
+        : 'px-3.5 py-2 rounded-xl text-xs font-bold bg-[#19202d] text-slate-300 border border-[#242d3d] hover:text-white transition';
+
+      btnMikro.className = filter === 'mikro'
+        ? 'px-3.5 py-2 rounded-xl text-xs font-bold bg-rose-600 text-white transition'
+        : 'px-3.5 py-2 rounded-xl text-xs font-bold bg-[#19202d] text-rose-400 border border-rose-500/30 hover:bg-rose-950/30 transition';
+
+      btnMakro.className = filter === 'makro'
+        ? 'px-3.5 py-2 rounded-xl text-xs font-bold bg-sky-600 text-white transition'
+        : 'px-3.5 py-2 rounded-xl text-xs font-bold bg-[#19202d] text-sky-400 border border-sky-500/30 hover:bg-sky-950/30 transition';
+
+      renderMechanicsCards();
+    }
+
+    function toggleMechanicCheck(id) {
+      checkedMechanics[id] = !checkedMechanics[id];
+      localStorage.setItem('dota2_checked_mechanics', JSON.stringify(checkedMechanics));
+      renderMechanicsCards();
+    }
+
+    function resetMechanicChecklist() {
+      checkedMechanics = {};
+      localStorage.removeItem('dota2_checked_mechanics');
+      renderMechanicsCards();
+    }
+
+    function updateProgressBars() {
+      const mikroItems = mechanicsData.filter(m => m.type === 'mikro');
+      const makroItems = mechanicsData.filter(m => m.type === 'makro');
+
+      const mikroChecked = mikroItems.filter(m => checkedMechanics[m.id]).length;
+      const makroChecked = makroItems.filter(m => checkedMechanics[m.id]).length;
+      const totalChecked = mikroChecked + makroChecked;
+
+      const totalPct = Math.round((totalChecked / mechanicsData.length) * 100);
+      const mikroPct = Math.round((mikroChecked / mikroItems.length) * 100);
+      const makroPct = Math.round((makroChecked / makroItems.length) * 100);
+
+      document.getElementById('prog-total-text').textContent = `${totalChecked} / ${mechanicsData.length} (${totalPct}%)`;
+      document.getElementById('prog-total-bar').style.width = `${totalPct}%`;
+
+      document.getElementById('prog-mikro-text').textContent = `${mikroChecked} / ${mikroItems.length} (${mikroPct}%)`;
+      document.getElementById('prog-mikro-bar').style.width = `${mikroPct}%`;
+
+      document.getElementById('prog-makro-text').textContent = `${makroChecked} / ${makroItems.length} (${makroPct}%)`;
+      document.getElementById('prog-makro-bar').style.width = `${makroPct}%`;
+    }
+
+    function renderMechanicsCards() {
+      updateProgressBars();
+      const grid = document.getElementById('mechanics-cards-grid');
+
+      const renderColumn = (type, title, subtitle, accentColor) => {
+        const items = mechanicsData.filter(m => m.type === type);
+        return `
+          <div class="space-y-3">
+            <div class="flex items-center justify-between pb-2 border-b border-[#242d3d]">
+              <div>
+                <h4 class="font-display text-lg font-bold text-${accentColor}-400">${title}</h4>
+                <span class="text-xs text-slate-400">${subtitle}</span>
+              </div>
+              <span class="px-2.5 py-1 rounded-lg bg-${accentColor}-500/10 text-${accentColor}-300 border border-${accentColor}-500/30 text-xs font-semibold">
+                ${items.length} Layer
+              </span>
+            </div>
+            <div class="space-y-3">
+              ${items.map(item => {
+                const isChecked = !!checkedMechanics[item.id];
+                return `
+                  <div onclick="toggleMechanicCheck('${item.id}')" class="cursor-pointer group p-4 rounded-xl border transition-all duration-200 ${isChecked ? `bg-${accentColor}-950/20 border-${accentColor}-500/60` : 'bg-[#0b0e14] border-[#242d3d] hover:border-slate-600'}">
+                    <div class="flex items-start gap-3">
+                      <div class="mt-0.5 w-5 h-5 rounded-md border flex items-center justify-center shrink-0 transition ${isChecked ? `bg-${accentColor}-500 border-${accentColor}-400 text-slate-950` : 'border-slate-600 group-hover:border-slate-400'}">
+                        ${isChecked ? '<i data-lucide="check" class="w-3.5 h-3.5 stroke-[3]"></i>' : ''}
+                      </div>
+                      <div class="flex-1">
+                        <div class="flex flex-wrap items-center justify-between gap-2 mb-1">
+                          <span class="text-[11px] font-bold uppercase tracking-wider text-${accentColor}-400">${item.difficulty}</span>
+                          ${isChecked ? '<span class="text-[11px] font-semibold text-emerald-400">✓ Dikuasai</span>' : ''}
+                        </div>
+                        <h5 class="font-bold text-sm sm:text-base ${isChecked ? 'text-white' : 'text-slate-200'}">${item.layer}. ${item.title}</h5>
+                        <p class="text-xs sm:text-sm text-slate-400 mt-1 leading-relaxed">${item.desc}</p>
+                      </div>
+                    </div>
+                  </div>
+                `;
+              }).join('')}
+            </div>
+          </div>
+        `;
+      };
+
+      if (currentMechanicFilter === 'all') {
+        grid.className = 'grid grid-cols-1 lg:grid-cols-2 gap-6';
+        grid.innerHTML =
+          renderColumn('mikro', 'Mikro', 'Urutan dari paling mudah ke tersulit', 'rose') +
+          renderColumn('makro', 'Makro', 'Urutan dari paling mudah ke tersulit', 'sky');
+      } else if (currentMechanicFilter === 'mikro') {
+        grid.className = 'grid grid-cols-1 gap-6';
+        grid.innerHTML = renderColumn('mikro', 'Mikro', 'Urutan dari paling mudah ke tersulit', 'rose');
+      } else {
+        grid.className = 'grid grid-cols-1 gap-6';
+        grid.innerHTML = renderColumn('makro', 'Makro', 'Urutan dari paling mudah ke tersulit', 'sky');
+      }
+
+      lucide.createIcons();
+    }
+
+    // Initialize Application on Load
+    window.addEventListener('DOMContentLoaded', () => {
+      renderMapVisuals();
+      updateTimerUI();
+      renderMechanicsCards();
+      lucide.createIcons();
+    });
+  </script>
+</body>
+</html>
